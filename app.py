@@ -20,19 +20,19 @@ st.caption("Comparative analysis of Agglomerative (bottom-up) and Divisive (top-
 def make_demo_data(n=500, seed=42):
     rng = np.random.default_rng(seed)
     profiles = [
-        (25, 35, 25, 2.0),
-        (45, 75, 80, 6.0),
-        (35, 25, 65, 3.5),
-        (55, 55, 35, 4.0),
-        (22, 65, 45, 1.5),
+        (22, 25, 20, 2.0),
+        (35, 50, 45, 4.0),
+        (48, 80, 80, 8.0),
+        (62, 115, 35, 3.0),
+        (28, 100, 65, 6.0),
     ]
     rows = []
     for i in range(n):
         p = profiles[rng.integers(0, len(profiles))]
-        age = np.clip(rng.normal(p[0], 6), 18, 75)
-        income = np.clip(rng.normal(p[1], 12), 10, 150)
-        spending = np.clip(rng.normal(p[2], 13), 1, 100)
-        frequency = max(1, rng.poisson(p[3]) + 1)
+        age = np.clip(rng.normal(p[0], 3), 18, 75)
+        income = np.clip(rng.normal(p[1], 6), 10, 150)
+        spending = np.clip(rng.normal(p[2], 5), 1, 100)
+        frequency = max(1, round(rng.normal(p[3], 0.8)))
         rows.append([f"C{i+1:04d}", round(age, 1), round(income, 1), round(spending, 1), int(frequency)])
     return pd.DataFrame(rows, columns=["CustomerID", "Age", "AnnualIncome_k", "SpendingScore", "PurchasesPerMonth"])
 
@@ -78,7 +78,7 @@ st.sidebar.header("Clustering settings")
 default_features = [c for c in ["Age", "AnnualIncome_k", "SpendingScore", "PurchasesPerMonth"] if c in raw.columns]
 numeric_cols = raw.select_dtypes(include=np.number).columns.tolist()
 features = st.sidebar.multiselect("Features", numeric_cols, default=default_features or numeric_cols[:4])
-k = st.sidebar.slider("Number of clusters", min_value=2, max_value=8, value=4)
+k = st.sidebar.slider("Number of clusters", min_value=2, max_value=8, value=5)
 method = st.sidebar.radio("Algorithm", ["Compare both", "Agglomerative", "Divisive"])
 
 if len(features) < 2:
